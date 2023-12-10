@@ -45,28 +45,27 @@ const app = Vue.createApp({
       this.imagenUrlTemp = URL.createObjectURL(file);
     },
     guardarCambios() {
-      const formData = new FormData();
-      formData.append('nombre', this.nombre);
-      formData.append('descripcion', this.descripcion);
-      formData.append('tipo_evento', this.tipo);
-      formData.append('fecha', this.fecha);
-      formData.append('ubicacion', this.ubicacion);
-      formData.append('detalles', this.detalles);
 
-      if (this.imagenSeleccionada) {
-        formData.append('imagen', this.imagenSeleccionada, this.imagenSeleccionada.name);
-      }
+      let evento = {
+        nombre: this.nombre,
+        descripcion: this.descripcion,
+        tipo_evento: this.tipo,
+        fecha: this.fecha,
+        ubicacion: this.ubicacion,
+        detalles: this.detalles,
+      };
 
       fetch(URL + 'eventos/' + this.idEvento, {
         method: 'PUT',
-        body: formData,
-        credentials: 'include', 
+        body: JSON.stringify(evento),
+        headers: { 'Content-Type': 'application/json' },
       })
         .then(response => {
+          console.log(response);
           if (response.ok) {
             return response.json();
           } else {
-            throw new Error('Error al guardar los cambios del evento.');
+            throw new Error('Error al guardar los cambios del evento.', response);
           }
         })
         .then(data => {
